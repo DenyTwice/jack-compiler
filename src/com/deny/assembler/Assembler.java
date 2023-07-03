@@ -1,5 +1,7 @@
 package com.deny.assembler;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,15 +24,16 @@ public class Assembler {
             System.exit(1);
         }
 
+        FileHandler.Formatter assemblyFFormatter = assemblyFile.new Formatter();
         try {
-            FileHandler.Formatter assemblyFFormatter = assemblyFile.new Formatter();
             ArrayList<String> formattedCode = assemblyFFormatter.format();
             HashMap<String, Integer> SymblTabl = SymbolTable.initializeTable(formattedCode);
             outputFile.write(Translator.translate(formattedCode, SymblTabl));
             System.out.println("Assembled sucessfully");
-        } catch (Throwable t) {
-            System.out.println("okay");
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: Unable to read file.");
+        } catch (IOException e) {
+            System.out.println("ERROR: Unable to write to file.");
         }
-
     }
 }
