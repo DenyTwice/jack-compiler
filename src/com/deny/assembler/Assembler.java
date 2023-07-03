@@ -3,8 +3,6 @@ package com.deny.assembler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.deny.assembler.FileHandler.Formatter;
-
 public class Assembler {
 
     public static void main(String[] args) {
@@ -26,9 +24,9 @@ public class Assembler {
 
         try {
             FileHandler.Formatter assemblyFFormatter = assemblyFile.new Formatter();
-            ArrayList<String> formattedContent = assemblyFFormatter.Format();
-            HashMap<String, Integer> SymTable = SymbolTable.initializeTable(formattedContent);
-            outputFile.write(Translator.translate(formattedContent, SymTable));
+            ArrayList<String> formattedCode = assemblyFFormatter.format();
+            HashMap<String, Integer> SymblTabl = SymbolTable.initializeTable(formattedCode);
+            outputFile.write(Translator.translate(formattedCode, SymblTabl));
             System.out.println("Assembled sucessfully");
         } catch (Throwable t) {
             System.out.println("okay");

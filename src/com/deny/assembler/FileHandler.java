@@ -13,8 +13,7 @@ public class FileHandler {
     File fileObj;
 
     FileHandler(String filePath) {
-        File file = new File(filePath);
-        this.fileObj = file;
+        this.fileObj = new File(filePath);
     }
 
     public boolean exists() {
@@ -43,7 +42,7 @@ public class FileHandler {
 
     public class Formatter {
 
-        public ArrayList<String> Format() throws FileNotFoundException {
+        public ArrayList<String> format() throws FileNotFoundException {
             ArrayList<String> fileContents = FileHandler.this.read();
             ArrayList<String> formattedContents = new ArrayList<String>();
 
@@ -64,7 +63,6 @@ public class FileHandler {
                     }
                 }
             }
-            System.out.println(formattedContents);
             return formattedContents;
         }
     }

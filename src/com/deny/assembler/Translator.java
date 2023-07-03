@@ -8,10 +8,10 @@ public class Translator {
     private static ArrayList<String> translatedContent = new ArrayList<String>();
 
     public static ArrayList<String> translate(ArrayList<String> fileContent, HashMap<String, Integer> symbolTable) {
-        return Parse(fileContent, symbolTable);
+        return iterate(fileContent, symbolTable);
     }
 
-    static ArrayList<String> Parse(ArrayList<String> fileContent, HashMap<String, Integer> symbolTable) {
+    private static ArrayList<String> iterate(ArrayList<String> fileContent, HashMap<String, Integer> symbolTable) {
         for (int i = 0; i < fileContent.size(); i++) {
             String line = fileContent.get(i);
             if (line.charAt(0) == '@') {
@@ -25,7 +25,7 @@ public class Translator {
         return translatedContent;
     }
 
-    static void aInstruction(String instruction, HashMap<String, Integer> SymbolTable) {
+    private static void aInstruction(String instruction, HashMap<String, Integer> SymbolTable) {
         if (Character.isDigit(instruction.charAt(1))) {
             Integer address = Integer.parseInt(instruction.substring(1));
             String binaryAddress = String.format("%16s", Integer.toBinaryString(address)).replace(' ', '0');
@@ -44,7 +44,7 @@ public class Translator {
 
     // cInstruction(instruction: line sent from parser)
     // appends binary string to translated content
-    static void cInstruction(String instruction) {
+    private static void cInstruction(String instruction) {
         if (instruction.contains("=") && instruction.contains(";")) {
             String[] assign = instruction.split("=");
             String[] branching = assign[1].split(";");

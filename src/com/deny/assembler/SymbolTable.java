@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 public class SymbolTable {
-    // initializeTable(fileContent: List of lines of the file)
-    // Sets up a hashmap with predefined symbols, reads through fileContent to
-    // identify labels and then once more to identify variables
-    // returns Hashmap
+
     static HashMap<String, Integer> initializeTable(ArrayList<String> fileContent) {
         HashMap<String, Integer> SymbolTable = new HashMap<>();
         int labelCount = 0;
