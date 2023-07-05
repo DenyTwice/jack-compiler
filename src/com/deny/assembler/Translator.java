@@ -3,71 +3,84 @@ package com.deny.assembler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// Handles translation of assembly commands to binary
 public class Translator {
 
-    private static ArrayList<String> translatedContent = new ArrayList<String>();
+    private static ArrayList<String> _translatedContent = new ArrayList<String>();
 
     public static ArrayList<String> translate(ArrayList<String> fileContent, HashMap<String, Integer> symbolTable) {
-        return iterate(fileContent, symbolTable);
+        _translatedContent.clear();
+
+        return _iterate(fileContent, symbolTable);
     }
 
-    private static ArrayList<String> iterate(ArrayList<String> fileContent, HashMap<String, Integer> symbolTable) {
+    private static ArrayList<String> _iterate(ArrayList<String> fileContent, HashMap<String, Integer> symbolTable) {
         for (int i = 0; i < fileContent.size(); i++) {
             String line = fileContent.get(i);
             if (line.charAt(0) == '@') {
-                aInstruction(line, symbolTable);
+                _aInstruction(line, symbolTable);
             } else if (line.charAt(0) == '(') {
                 continue;
             } else {
-                cInstruction(line);
+                _cInstruction(line);
             }
         }
-        return translatedContent;
+
+        return _translatedContent;
     }
 
-    private static void aInstruction(String instruction, HashMap<String, Integer> SymbolTable) {
+    private static void _aInstruction(String instruction, HashMap<String, Integer> symbolTable) {
         if (Character.isDigit(instruction.charAt(1))) {
+
             Integer address = Integer.parseInt(instruction.substring(1));
-            String binaryAddress = String.format("%16s", Integer.toBinaryString(address)).replace(' ', '0');
-            translatedContent.add(binaryAddress);
+            String binaryAddress = String.format("%16s", Integer.toBinaryString(address))
+                    .replace(' ', '0');
+            _translatedContent.add(binaryAddress);
+
         } else {
-            try {
-                Integer address = SymbolTable.get(instruction.substring(1));
-                String binaryAddress = String.format("%16s", Integer.toBinaryString(address)).replace(' ', '0');
-                translatedContent.add(binaryAddress);
-            } catch (Throwable t) {
-                System.out.println("Error translating instruction:" + instruction);
-                System.exit(1);
-            }
+
+            Integer address = symbolTable.get(instruction.substring(1));
+            String binaryAddress = String.format("%16s", Integer.toBinaryString(address))
+                    .replace(' ', '0');
+            _translatedContent.add(binaryAddress);
+
         }
     }
 
-    // cInstruction(instruction: line sent from parser)
-    // appends binary string to translated content
-    private static void cInstruction(String instruction) {
+    private static void _cInstruction(String instruction) {
         if (instruction.contains("=") && instruction.contains(";")) {
+
             String[] assign = instruction.split("=");
             String[] branching = assign[1].split(";");
 
-            translatedContent
-                    .add("111" + destTranslator(assign[0]) + compTranslator(branching[0])
-                            + jumpTranslator(branching[1]));
+            _translatedContent
+                    .add("111"
+                            + _destTranslator(assign[0])
+                            + _compTranslator(branching[0])
+                            + _jumpTranslator(branching[1]));
+
         } else if (instruction.contains("=")) {
+
             String[] assign = instruction.split("=");
 
-            translatedContent
-                    .add("111" + compTranslator(assign[1]) + destTranslator(assign[0]) + jumpTranslator("null"));
+            _translatedContent
+                    .add("111"
+                            + _compTranslator(assign[1])
+                            + _destTranslator(assign[0])
+                            + _jumpTranslator("null"));
 
         } else {
+
             String[] branching = instruction.split(";");
-            translatedContent
-                    .add("111" + compTranslator(branching[0]) + destTranslator("null") + jumpTranslator(branching[1]));
+            _translatedContent
+                    .add("111"
+                            + _compTranslator(branching[0])
+                            + _destTranslator("null")
+                            + _jumpTranslator(branching[1]));
         }
     }
 
-    // compTranslator(comp: computation part sent from cInstruction())
-    // returns corresponding binary translation
-    private static String compTranslator(String comp) {
+    private static String _compTranslator(String comp) {
         HashMap<String, String> compTable = new HashMap<>();
 
         compTable.put("0", "0101010");
@@ -102,9 +115,7 @@ public class Translator {
         return compTable.get(comp);
     }
 
-    // destTranslator(dest: destination part sent from cInstruction())
-    // returns corresponding binary translation
-    private static String destTranslator(String dest) {
+    private static String _destTranslator(String dest) {
         HashMap<String, String> destTable = new HashMap<>();
 
         destTable.put("null", "000");
@@ -119,9 +130,7 @@ public class Translator {
         return destTable.get(dest);
     }
 
-    // jumpTranslator(jmp: jump part sent from cInstruction())
-    // returns corresponding binary translation
-    private static String jumpTranslator(String jmp) {
+    private static String _jumpTranslator(String jmp) {
         HashMap<String, String> jumpTable = new HashMap<>();
 
         jumpTable.put("null", "000");

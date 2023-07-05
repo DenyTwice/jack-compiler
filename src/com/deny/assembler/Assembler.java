@@ -5,14 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// Runs assembler with arguments from CLI
 public class Assembler {
 
     public static void main(String[] args) {
-
         if (args.length < 2) {
             System.out.println(
                     "ERROR: Missing operands.\n"
-                            + "Usage:java Compiler.Assembler.Assemble [Assembly File Path] [Output File Name]");
+                            + "Usage:java Compiler.Assembler.Assemble "
+                            + "[Assembly File Path] [Output File Name]");
             System.exit(1);
         }
 
@@ -26,10 +27,14 @@ public class Assembler {
 
         FileHandler.Formatter assemblyFFormatter = assemblyFile.new Formatter();
         try {
+
             ArrayList<String> formattedCode = assemblyFFormatter.format();
-            HashMap<String, Integer> SymblTabl = SymbolTable.initializeTable(formattedCode);
-            outputFile.write(Translator.translate(formattedCode, SymblTabl));
+            HashMap<String, Integer> symbolTable = SymbolTable
+                    .initializeTable(formattedCode);
+            outputFile.write(Translator.translate(formattedCode, symbolTable));
+
             System.out.println("Assembled sucessfully");
+
         } catch (FileNotFoundException e) {
             System.out.println("ERROR: Unable to read file.");
         } catch (IOException e) {
